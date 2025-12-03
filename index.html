@@ -1,0 +1,2250 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory &amp; Sales Management System</title>
+  <script src="/_sdk/elements_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+        html {
+            height: 100%;
+        }
+        
+        @keyframes slideInFromTop {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideInFromBottom {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideInFromLeft {
+            0% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideInFromRight {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(108, 142, 184, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(108, 142, 184, 0.5);
+            }
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(107, 144, 128, 0.15), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        .gradient-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(107, 144, 128, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(164, 184, 196, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(142, 172, 186, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3), transparent);
+            transition: left 0.6s;
+        }
+        
+        .card-hover:hover::before {
+            left: 100%;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 
+                0 12px 28px rgba(107, 144, 128, 0.25),
+                0 0 0 1px rgba(107, 144, 128, 0.2);
+            border-color: rgba(107, 144, 128, 0.4);
+        }
+        
+        .btn-primary {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #6b9080 0%, #7fa393 100%);
+            box-shadow: 0 2px 8px 0 rgba(107, 144, 128, 0.3);
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.02) translateY(-1px);
+            box-shadow: 0 6px 16px rgba(107, 144, 128, 0.35);
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .stat-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 
+                0 4px 20px 0 rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(107, 144, 128, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(107, 144, 128, 0.1) 0%, transparent 70%);
+            animation: rotateSlow 20s linear infinite;
+        }
+        
+        @keyframes rotateSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(108, 142, 184, 0.3);
+            border-top: 3px solid #6c8eb8;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+        }
+        
+        .toast-success {
+            background: linear-gradient(135deg, #8db9d6 0%, #6c9ec2 100%);
+        }
+        
+        .toast-error {
+            background: linear-gradient(135deg, #e89ba3 0%, #d47983 100%);
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .table-row {
+            transition: all 0.2s ease;
+        }
+        
+        .table-row:hover {
+            background: rgba(108, 142, 184, 0.15);
+            transform: scale(1.01);
+        }
+        
+        .icon-float {
+            animation: pulse 2s infinite;
+        }
+        
+        .glow-text {
+            text-shadow: 
+                0 1px 2px rgba(107, 144, 128, 0.2);
+        }
+        
+        .nav-item {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: #6c8eb8;
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-item:hover::after {
+            width: 100%;
+        }
+        
+        .slide-in-1 { animation: slideInFromLeft 0.5s ease 0.1s both; }
+        .slide-in-2 { animation: slideInFromLeft 0.5s ease 0.2s both; }
+        .slide-in-3 { animation: slideInFromLeft 0.5s ease 0.3s both; }
+        .slide-in-4 { animation: slideInFromLeft 0.5s ease 0.4s both; }
+        
+        .fade-in-1 { animation: fadeIn 0.6s ease 0.1s both; }
+        .fade-in-2 { animation: fadeIn 0.6s ease 0.3s both; }
+        .fade-in-3 { animation: fadeIn 0.6s ease 0.5s both; }
+        .fade-in-4 { animation: fadeIn 0.6s ease 0.7s both; }
+        
+        input, textarea, select {
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.7) !important;
+            border-color: #6b9080 !important;
+            color: #e2e8f0 !important;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #6b9080;
+            box-shadow: 0 0 0 3px rgba(107, 144, 128, 0.2);
+            transform: scale(1.00);
+        }
+        
+        input::placeholder, textarea::placeholder {
+            color: #94a3b8 !important;
+        }
+        
+        select option {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+        
+        .supplier-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(107, 144, 128, 0.3);
+        }
+        
+        .sale-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border-left: 4px solid #6b9080;
+        }
+        
+        .product-table {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+        }
+        
+        .hexagon-bg {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(107, 144, 128, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(164, 184, 196, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(142, 172, 186, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 10% 90%, rgba(107, 144, 128, 0.1) 0%, transparent 40%);
+            position: relative;
+        }
+        
+        .hexagon-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(107, 144, 128, 0.05) 60px, rgba(107, 144, 128, 0.05) 61px),
+                repeating-linear-gradient(-45deg, transparent, transparent 60px, rgba(164, 184, 196, 0.05) 60px, rgba(164, 184, 196, 0.05) 61px);
+            pointer-events: none;
+        }
+        
+        .data-grid {
+            display: grid;
+            gap: 20px;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .count-animation {
+            animation: countUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        @keyframes floatReverse {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(20px);
+            }
+        }
+        
+        .float-1 {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .float-2 {
+            animation: floatReverse 8s ease-in-out infinite;
+        }
+        
+        .float-3 {
+            animation: float 7s ease-in-out infinite 1s;
+        }
+        
+        .decorative-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 1;
+            pointer-events: none;
+        }
+        
+        @keyframes particles {
+            0%, 100% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0.8;
+            }
+            25% {
+                transform: translateY(-20px) translateX(10px) scale(1.1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-10px) translateX(-10px) scale(0.9);
+                opacity: 0.8;
+            }
+            75% {
+                transform: translateY(-30px) translateX(5px) scale(1.05);
+                opacity: 0.9;
+            }
+        }
+        
+        .particle-effect {
+            animation: particles 8s ease-in-out infinite;
+        }
+
+        /* ================= RESPONSIVE STYLES ================= */
+        /* Mobile devices */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+            
+            /* Navigation */
+            nav > div > div:first-child {
+                flex-direction: column !important;
+                gap: 12px !important;
+                text-align: center !important;
+            }
+            
+            nav > div > div:first-child h1 {
+                font-size: 1.5rem !important;
+                letter-spacing: 1px !important;
+                line-height: 1.2 !important;
+            }
+            
+            nav > div > div:nth-child(2) {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            
+            .nav-item.btn-primary {
+                padding: 10px 12px !important;
+                font-size: 0.75rem !important;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* Dashboard stats */
+            .data-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+            
+            .stat-card {
+                padding: 16px !important;
+            }
+            
+            .stat-card > div > div:first-child p:nth-child(2) {
+                font-size: 1.75rem !important;
+                margin: 8px 0 !important;
+            }
+            
+            .icon-float {
+                width: 50px !important;
+                height: 50px !important;
+                font-size: 24px !important;
+            }
+            
+            /* Product Management */
+            .product-table {
+                overflow-x: auto;
+                border-radius: 12px !important;
+                margin: 0 -10px !important;
+                width: calc(100% + 20px) !important;
+            }
+            
+            .product-table table {
+                min-width: 700px;
+            }
+            
+            .product-table th,
+            .product-table td {
+                padding: 10px 8px !important;
+                font-size: 0.875rem !important;
+            }
+            
+            .product-table td button {
+                padding: 6px 10px !important;
+                font-size: 0.75rem !important;
+                margin-right: 4px !important;
+                margin-bottom: 4px !important;
+                min-height: 36px;
+                min-width: 36px;
+            }
+            
+            /* Supplier cards grid */
+            .fade-in-3[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+            
+            .supplier-card {
+                padding: 20px !important;
+            }
+            
+            /* Sales cards */
+            .sale-card {
+                padding: 20px !important;
+            }
+            
+            /* Modal adjustments */
+            .modal-content {
+                padding: 20px !important;
+                margin: 10px !important;
+                max-width: 95% !important;
+                max-height: 90vh !important;
+                overflow-y: auto !important;
+            }
+            
+            .modal-content h2 {
+                font-size: 1.25rem !important;
+                margin-bottom: 20px !important;
+                line-height: 1.3 !important;
+            }
+            
+            /* Form elements in modals */
+            input, textarea, select {
+                padding: 12px !important;
+                font-size: 16px !important;
+                min-height: 44px;
+            }
+            
+            /* Dashboard revenue card */
+            .fade-in-2.card-hover {
+                padding: 20px !important;
+            }
+            
+            .fade-in-2.card-hover > div > div:first-child {
+                flex-direction: column !important;
+                gap: 16px !important;
+                text-align: center !important;
+            }
+            
+            .fade-in-2.card-hover > div > div:first-child > div:last-child {
+                text-align: center !important;
+                margin-top: 16px !important;
+            }
+            
+            /* Buttons */
+            .btn-primary {
+                padding: 12px 16px !important;
+                font-size: 0.875rem !important;
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Decorative circles adjustments */
+            .decorative-circle {
+                opacity: 0.3 !important;
+                filter: blur(40px) !important;
+            }
+            
+            /* Hide shimmer animation on mobile for performance */
+            .gradient-bg::before {
+                animation: none;
+            }
+            
+            /* Adjust main content padding */
+            [style*="padding: 20px"] {
+                padding: 12px !important;
+            }
+            
+            /* Sale receipt modal */
+            .modal-content[style*="padding: 40px"] {
+                padding: 16px !important;
+            }
+            
+            /* Action buttons in tables - stack on mobile */
+            .table-row td:last-child {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            
+            /* Toast notifications */
+            .toast {
+                left: 10px !important;
+                right: 10px !important;
+                text-align: center !important;
+                font-size: 0.875rem !important;
+                padding: 12px 16px !important;
+                top: 10px !important;
+            }
+            
+            /* Prevent text overflow */
+            h1, h2, h3, h4, h5, h6,
+            p, span, div, button {
+                overflow-wrap: break-word !important;
+                word-wrap: break-word !important;
+            }
+            
+            /* Form grid in product management */
+            .fade-in-2[style*="grid-template-columns"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            
+            /* Modal width adjustment */
+            form[style*="width: 600px"],
+            form[style*="width: 700px"],
+            div[style*="width: 600px"],
+            div[style*="width: 700px"] {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            
+            /* Sale items in cart */
+            #saleItemsList > div > div {
+                flex-direction: column !important;
+                gap: 4px !important;
+                align-items: flex-start !important;
+            }
+            
+            /* Focus states for touch navigation */
+            button:focus,
+            input:focus,
+            select:focus,
+            textarea:focus {
+                outline: 3px solid rgba(107, 144, 128, 0.5) !important;
+                outline-offset: 2px !important;
+            }
+            
+            /* Loading spinner size */
+            .loading-spinner {
+                width: 20px !important;
+                height: 20px !important;
+            }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            body {
+                font-size: 13px;
+            }
+            
+            nav {
+                padding: 12px 10px !important;
+            }
+            
+            nav > div > div:first-child h1 {
+                font-size: 1.25rem !important;
+            }
+            
+            nav > div > div:nth-child(2) {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .stat-card {
+                padding: 12px !important;
+            }
+            
+            .data-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .stat-card > div > div:first-child p:nth-child(2) {
+                font-size: 1.5rem !important;
+            }
+            
+            .icon-float {
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 20px !important;
+            }
+            
+            /* Form grid in product management */
+            .fade-in-2[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+                gap: 6px !important;
+            }
+            
+            .nav-item.btn-primary {
+                font-size: 0.7rem !important;
+                padding: 8px 10px !important;
+            }
+            
+            /* Ensure sufficient color contrast */
+            .btn-primary {
+                color: white !important;
+            }
+        }
+
+        /* Tablet adjustments */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .data-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .fade-in-3[style*="grid-template-columns"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            nav > div > div:nth-child(2) {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+            
+            .product-table table {
+                min-width: 700px;
+            }
+            
+            /* Reduce decorative circles size */
+            .decorative-circle {
+                opacity: 0.5;
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .data-grid {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+            
+            nav > div > div:nth-child(2) {
+                grid-template-columns: repeat(4, 1fr) !important;
+            }
+            
+            .modal-content {
+                max-height: 80vh;
+            }
+            
+            .stat-card {
+                padding: 12px !important;
+            }
+        }
+
+        /* High-resolution screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .btn-primary,
+            .stat-card,
+            .card-hover {
+                border-width: 1px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .gradient-bg,
+            .btn-primary,
+            .modal-overlay,
+            .toast {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            
+            .stat-card {
+                break-inside: avoid;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+            }
+        }
+
+        /* Ensure viewport scaling works correctly */
+        @viewport {
+            width: device-width;
+            zoom: 1.0;
+        }
+
+        @-ms-viewport {
+            width: device-width;
+        }
+
+        /* Prevent horizontal scroll */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Smooth transitions */
+        * {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+ </head>
+ <body>
+  <div id="app" class="w-full min-h-full hexagon-bg" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); position: relative; color: #e2e8f0;">
+   <div class="decorative-circle float-1" style="width: 400px; height: 400px; background: radial-gradient(circle, rgba(107, 144, 128, 0.15), rgba(107, 144, 128, 0.05), transparent); top: 5%; left: -10%; z-index: 0; filter: blur(80px);"></div>
+   <div class="decorative-circle float-2" style="width: 350px; height: 350px; background: radial-gradient(circle, rgba(164, 184, 196, 0.15), rgba(164, 184, 196, 0.05), transparent); top: 40%; right: -10%; z-index: 0; filter: blur(80px);"></div>
+   <div class="decorative-circle float-3" style="width: 300px; height: 300px; background: radial-gradient(circle, rgba(142, 172, 186, 0.15), rgba(142, 172, 186, 0.05), transparent); bottom: 10%; left: 20%; z-index: 0; filter: blur(80px);"></div>
+   <div class="decorative-circle float-1" style="width: 250px; height: 250px; background: radial-gradient(circle, rgba(107, 144, 128, 0.1), transparent); top: 70%; right: 30%; z-index: 0; filter: blur(70px); animation-delay: 2s;"></div>
+  </div>
+  <script>
+        const defaultConfig = {
+            background_color: "#0f172a",
+            primary_color: "#6b9080",
+            secondary_color: "#1e293b",
+            text_color: "#e2e8f0",
+            accent_color: "#a4b8c4",
+            font_family: "Inter",
+            font_size: 16,
+            app_title: "Inventory & Sales Management",
+            welcome_message: "Streamlined Business Operations Made Simple"
+        };
+
+        let products = [];
+        let suppliers = [];
+        let sales = [];
+        let currentView = 'dashboard';
+        let currentModal = null;
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideInFromRight 0.4s reverse';
+                setTimeout(() => toast.remove(), 400);
+            }, 2600);
+        }
+
+        function showModal(title, content) {
+            currentModal = { title, content };
+            renderApp();
+        }
+
+        function closeModal() {
+            currentModal = null;
+            renderApp();
+        }
+
+        function getProductById(id) {
+            return products.find(p => p.id === id);
+        }
+
+        function getSupplierById(id) {
+            return suppliers.find(s => s.id === id);
+        }
+
+        async function addProduct(productData) {
+            if (products.length >= 999) {
+                showToast('⚠️ MAXIMUM LIMIT OF 999 PRODUCTS REACHED!', 'error');
+                return;
+            }
+
+            const existingProduct = products.find(p => p.id === productData.id);
+            if (existingProduct) {
+                showToast('⚠️ PRODUCT ID ALREADY EXISTS!', 'error');
+                return;
+            }
+
+            const loadingBtn = document.getElementById('submitBtn');
+            if (loadingBtn) {
+                loadingBtn.disabled = true;
+                loadingBtn.innerHTML = '<span class="loading-spinner"></span> PROCESSING...';
+            }
+
+            closeModal();
+            showToast('⚡ ADDING PRODUCT...', 'success');
+
+            const result = await window.dataSdk.create({
+                type: 'product',
+                id: productData.id,
+                name: productData.name,
+                description: productData.description,
+                category: productData.category,
+                quantity: productData.quantity,
+                price: productData.price,
+                supplierID: productData.supplierID || 0
+            });
+
+            if (result.isOk) {
+                showToast('✓ PRODUCT DEPLOYED SUCCESSFULLY!');
+            } else {
+                showToast('✗ OPERATION FAILED - TRY AGAIN', 'error');
+            }
+        }
+
+        async function updateProduct(backendId, updates) {
+            const product = products.find(p => p.__backendId === backendId);
+            if (!product) {
+                showToast('✗ PRODUCT NOT FOUND', 'error');
+                return;
+            }
+
+            closeModal();
+            showToast('⚡ UPDATING PRODUCT...', 'success');
+
+            const result = await window.dataSdk.update({
+                ...product,
+                ...updates
+            });
+
+            if (result.isOk) {
+                showToast('✓ PRODUCT UPDATED!');
+            } else {
+                showToast('✗ UPDATE FAILED', 'error');
+            }
+        }
+
+        async function addSupplier(supplierData) {
+            if (suppliers.length >= 999) {
+                showToast('⚠️ MAXIMUM LIMIT OF 999 SUPPLIERS REACHED!', 'error');
+                return;
+            }
+
+            const existingSupplier = suppliers.find(s => s.id === supplierData.id);
+            if (existingSupplier) {
+                showToast('⚠️ SUPPLIER ID ALREADY EXISTS!', 'error');
+                return;
+            }
+
+            closeModal();
+            showToast('⚡ CONNECTING SUPPLIER...', 'success');
+
+            const result = await window.dataSdk.create({
+                type: 'supplier',
+                id: supplierData.id,
+                name: supplierData.name,
+                phonenumber: supplierData.phonenumber,
+                email: supplierData.email
+            });
+
+            if (result.isOk) {
+                showToast('✓ SUPPLIER CONNECTED!');
+            } else {
+                showToast('✗ CONNECTION FAILED', 'error');
+            }
+        }
+
+        async function linkProductToSupplier(productId, supplierId) {
+            const product = products.find(p => p.id === productId);
+            const supplier = suppliers.find(s => s.id === supplierId);
+
+            if (!product) {
+                showToast('✗ PRODUCT NOT FOUND!', 'error');
+                return;
+            }
+            if (!supplier) {
+                showToast('✗ SUPPLIER NOT FOUND!', 'error');
+                return;
+            }
+
+            closeModal();
+            showToast('⚡ ESTABLISHING LINK...', 'success');
+
+            const result = await window.dataSdk.update({
+                ...product,
+                supplierID: supplierId
+            });
+
+            if (result.isOk) {
+                showToast('✓ LINK ESTABLISHED!');
+            } else {
+                showToast('✗ LINK FAILED', 'error');
+            }
+        }
+
+        async function processSale(saleData) {
+            if (sales.length >= 999) {
+                showToast('⚠️ MAXIMUM LIMIT OF 999 SALES REACHED!', 'error');
+                return;
+            }
+
+            const existingSale = sales.find(s => s.saleID === saleData.saleID);
+            if (existingSale) {
+                showToast('⚠️ SALE ID ALREADY EXISTS!', 'error');
+                return;
+            }
+
+            closeModal();
+            showToast('⚡ PROCESSING TRANSACTION...', 'success');
+
+            for (const item of saleData.items) {
+                const product = products.find(p => p.id === item.productID);
+                if (product) {
+                    const updateResult = await window.dataSdk.update({
+                        ...product,
+                        quantity: product.quantity - item.quantity
+                    });
+                    if (!updateResult.isOk) {
+                        showToast('✗ STOCK UPDATE FAILED', 'error');
+                        return;
+                    }
+                }
+            }
+
+            const result = await window.dataSdk.create({
+                type: 'sale',
+                saleID: saleData.saleID,
+                customerName: saleData.customerName,
+                date: saleData.date,
+                items: JSON.stringify(saleData.items),
+                grandTotal: saleData.grandTotal
+            });
+
+            if (result.isOk) {
+                showToast('✓ SALE COMPLETED!');
+                showReceipt(saleData);
+            } else {
+                showToast('✗ SALE RECORDING FAILED', 'error');
+            }
+        }
+
+        function showReceipt(saleData) {
+            const config = window.elementSdk?.config || defaultConfig;
+            const receiptHTML = `
+                <div class="modal-content" style="background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%); padding: 20px; border-radius: 20px; max-width: 95%; border: 2px solid ${config.primary_color || defaultConfig.primary_color};">
+                    <div style="text-align: center; margin-bottom: 24px; border-bottom: 2px solid ${config.primary_color || defaultConfig.primary_color}; padding-bottom: 16px;">
+                        <h2 class="glow-text" style="font-size: 28px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin: 0; letter-spacing: 2px;">⚡ RECEIPT ⚡</h2>
+                        <p style="color: ${config.text_color || defaultConfig.text_color}; margin-top: 8px; font-size: 16px; opacity: 0.9;">TRANSACTION COMPLETED</p>
+                    </div>
+                    
+                    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 24px; border-left: 4px solid ${config.accent_color || defaultConfig.accent_color};">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; font-size: 14px;">SALE ID:</span>
+                            <span style="color: ${config.primary_color || defaultConfig.primary_color}; font-weight: bold; font-size: 14px;">#${saleData.saleID}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; font-size: 14px;">CUSTOMER:</span>
+                            <span style="color: ${config.text_color || defaultConfig.text_color}; font-size: 14px;">${saleData.customerName}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; font-size: 14px;">DATE:</span>
+                            <span style="color: ${config.text_color || defaultConfig.text_color}; font-size: 14px;">${saleData.date}</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 24px;">
+                        <h3 style="font-size: 18px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: 16px; letter-spacing: 1px;">ITEMS PURCHASED:</h3>
+                        ${saleData.items.map(item => `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding: 12px; background: rgba(255, 107, 0, 0.1); border-radius: 8px; border: 1px solid rgba(255, 107, 0, 0.3); transition: all 0.3s;">
+                                <div>
+                                    <div style="font-weight: 600; color: ${config.text_color || defaultConfig.text_color}; font-size: 14px;">${item.productName}</div>
+                                    <div style="font-size: 12px; color: ${config.accent_color || defaultConfig.accent_color}; margin-top: 4px;">${item.quantity} × $${item.unitPrice.toFixed(2)}</div>
+                                </div>
+                                <div style="font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; font-size: 16px;">$${item.itemTotal.toFixed(2)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div style="border-top: 3px solid ${config.primary_color || defaultConfig.primary_color}; padding-top: 16px; margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="glow-text" style="font-size: 20px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; letter-spacing: 1px;">GRAND TOTAL:</span>
+                            <span class="glow-text" style="font-size: 28px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color};">$${saleData.grandTotal.toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button onclick="closeModal()" class="btn-primary" style="background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: 14px 32px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; font-size: 16px; letter-spacing: 1px; text-transform: uppercase;">✓ CLOSE</button>
+                    </div>
+                </div>
+            `;
+            showModal('TRANSACTION COMPLETE', receiptHTML);
+        }
+
+        function renderDashboard() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            
+            const totalProducts = products.length;
+            const totalSuppliers = suppliers.length;
+            const totalSales = sales.length;
+            const lowStockProducts = products.filter(p => p.quantity < 10).length;
+            const totalRevenue = sales.reduce((sum, sale) => sum + sale.grandTotal, 0);
+
+            const isMobile = window.innerWidth <= 768;
+            const titleSize = isMobile ? baseSize * 1.25 : baseSize * 1.75;
+            const statSize = isMobile ? baseSize * 1.5 : baseSize * 3;
+            const revenueSize = isMobile ? baseSize * 2 : baseSize * 4;
+
+            return `
+                <div style="padding: ${isMobile ? '12px' : '20px'};">
+                    <div class="fade-in-1" style="margin-bottom: ${isMobile ? '16px' : '24px'};">
+                        <h1 class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${titleSize}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin-bottom: ${isMobile ? '8px' : '12px'}; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase; text-align: ${isMobile ? 'center' : 'left'};">
+                            ${config.app_title || defaultConfig.app_title}
+                        </h1>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0; font-weight: 600; letter-spacing: ${isMobile ? '0.5px' : '1px'}; text-align: ${isMobile ? 'center' : 'left'};">
+                            ${config.welcome_message || defaultConfig.welcome_message}
+                        </p>
+                    </div>
+
+                    <div class="data-grid" style="display: grid; grid-template-columns: ${isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(240px, 1fr))'}; gap: ${isMobile ? '12px' : '20px'}; margin-bottom: ${isMobile ? '24px' : '32px'};">
+                        <div class="stat-card card-hover slide-in-1" style="position: relative; z-index: 1;">
+                            <div style="display: flex; ${isMobile ? 'flex-direction: column; gap: 12px;' : 'justify-content: space-between;'} align-items: center; position: relative; z-index: 2;">
+                                <div style="${isMobile ? 'text-align: center;' : ''}">
+                                    <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.75 : 0.875)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin-bottom: ${isMobile ? '8px' : '12px'}; font-weight: 700; letter-spacing: ${isMobile ? '1px' : '1.5px'}; text-transform: uppercase;">Total Products</p>
+                                    <p class="count-animation" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${statSize}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin: 0; text-shadow: 0 2px 8px rgba(108, 142, 184, 0.3);">${totalProducts}</p>
+                                    <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.625 : 0.75)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: ${isMobile ? '4px 0 0 0' : '8px 0 0 0'}; opacity: 0.8;">Items in inventory</p>
+                                </div>
+                                <div class="icon-float" style="background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.accent_color || defaultConfig.accent_color} 100%); width: ${isMobile ? '50px' : '80px'}; height: ${isMobile ? '50px' : '80px'}; border-radius: ${isMobile ? '12px' : '20px'}; display: flex; align-items: center; justify-content: center; color: white; font-size: ${isMobile ? '24px' : '42px'}; box-shadow: 0 10px 30px rgba(108, 142, 184, 0.4);">📦</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card card-hover slide-in-2" style="position: relative; z-index: 1;">
+                            <div style="display: flex; ${isMobile ? 'flex-direction: column; gap: 12px;' : 'justify-content: space-between;'} align-items: center; position: relative; z-index: 2;">
+                                <div style="${isMobile ? 'text-align: center;' : ''}">
+                                    <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.75 : 0.875)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin-bottom: ${isMobile ? '8px' : '12px'}; font-weight: 700; letter-spacing: ${isMobile ? '1px' : '1.5px'}; text-transform: uppercase;">Total Suppliers</p>
+                                    <p class="count-animation" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${statSize}px; font-weight: bold; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0; text-shadow: 0 2px 8px rgba(149, 184, 209, 0.3);">${totalSuppliers}</p>
+                                    <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.625 : 0.75)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: ${isMobile ? '4px 0 0 0' : '8px 0 0 0'}; opacity: 0.8;">Active partners</p>
+                                </div>
+                                <div class="icon-float" style="background: linear-gradient(135deg, ${config.accent_color || defaultConfig.accent_color} 0%, #7fb3d1 100%); width: ${isMobile ? '50px' : '80px'}; height: ${isMobile ? '50px' : '80px'}; border-radius: ${isMobile ? '12px' : '20px'}; display: flex; align-items: center; justify-content: center; color: white; font-size: ${isMobile ? '24px' : '42px'}; box-shadow: 0 10px 30px rgba(149, 184, 209, 0.4);">🚚</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card card-hover slide-in-3" style="position: relative; z-index: 1;">
+                            <div style="display: flex; ${isMobile ? 'flex-direction: column; gap: 12px;' : 'justify-content: space-between;'} align-items: center; position: relative; z-index: 2;">
+                                <div style="${isMobile ? 'text-align: center;' : ''}">
+                                    <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.75 : 0.875)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin-bottom: ${isMobile ? '8px' : '12px'}; font-weight: 700; letter-spacing: ${isMobile ? '1px' : '1.5px'}; text-transform: uppercase;">Total Sales</p>
+                                    <p class="count-animation" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${statSize}px; font-weight: bold; color: #10b981; margin: 0; text-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">${totalSales}</p>
+                                    <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.625 : 0.75)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: ${isMobile ? '4px 0 0 0' : '8px 0 0 0'}; opacity: 0.8;">Completed transactions</p>
+                                </div>
+                                <div class="icon-float" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); width: ${isMobile ? '50px' : '80px'}; height: ${isMobile ? '50px' : '80px'}; border-radius: ${isMobile ? '12px' : '20px'}; display: flex; align-items: center; justify-content: center; color: white; font-size: ${isMobile ? '24px' : '42px'}; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);">💰</div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card card-hover slide-in-4" style="position: relative; z-index: 1; ${lowStockProducts > 0 ? 'border: 2px solid #ef4444; animation: glowPulse 2s infinite;' : ''}">
+                            <div style="display: flex; ${isMobile ? 'flex-direction: column; gap: 12px;' : 'justify-content: space-between;'} align-items: center; position: relative; z-index: 2;">
+                                <div style="${isMobile ? 'text-align: center;' : ''}">
+                                    <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.75 : 0.875)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin-bottom: ${isMobile ? '8px' : '12px'}; font-weight: 700; letter-spacing: ${isMobile ? '1px' : '1.5px'}; text-transform: uppercase;">Low Stock Alert</p>
+                                    <p class="count-animation" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${statSize}px; font-weight: bold; color: #ef4444; margin: 0; text-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">${lowStockProducts}</p>
+                                    <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.625 : 0.75)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: ${isMobile ? '4px 0 0 0' : '8px 0 0 0'}; opacity: 0.8;">${lowStockProducts > 0 ? 'Needs restocking!' : 'All stocks good'}</p>
+                                </div>
+                                <div class="icon-float" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); width: ${isMobile ? '50px' : '80px'}; height: ${isMobile ? '50px' : '80px'}; border-radius: ${isMobile ? '12px' : '20px'}; display: flex; align-items: center; justify-content: center; color: white; font-size: ${isMobile ? '24px' : '42px'}; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);">⚠️</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fade-in-2 card-hover" style="background: linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%); border-radius: ${isMobile ? '16px' : '24px'}; padding: ${isMobile ? '20px' : '48px'}; box-shadow: 0 12px 48px rgba(108, 142, 184, 0.25); border: 3px solid ${config.primary_color || defaultConfig.primary_color}; position: relative; overflow: hidden;">
+                        ${!isMobile ? `
+                        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(108, 142, 184, 0.2) 0%, transparent 70%); border-radius: 50%;"></div>
+                        <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(149, 184, 209, 0.2) 0%, transparent 70%); border-radius: 50%;"></div>
+                        ` : ''}
+                        <div style="display: flex; ${isMobile ? 'flex-direction: column; gap: 20px;' : 'justify-content: space-between;'} align-items: ${isMobile ? 'center' : 'center'}; position: relative; z-index: 1;">
+                            <div style="${isMobile ? 'text-align: center;' : ''}">
+                                <div style="display: flex; ${isMobile ? 'flex-direction: column; gap: 12px; align-items: center;' : 'align-items: center; gap: 12px;'} margin-bottom: ${isMobile ? '12px' : '16px'};">
+                                    <div style="width: ${isMobile ? '48px' : '56px'}; height: ${isMobile ? '48px' : '56px'}; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.accent_color || defaultConfig.accent_color} 100%); border-radius: ${isMobile ? '12px' : '16px'}; display: flex; align-items: center; justify-content: center; font-size: ${isMobile ? '24px' : '32px'}; box-shadow: 0 8px 24px rgba(108, 142, 184, 0.4);">💎</div>
+                                    <div>
+                                        <h2 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.75}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin: 0; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">Total Revenue</h2>
+                                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.75 : 0.875)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: ${isMobile ? '4px 0 0 0' : '4px 0 0 0'}; font-weight: 600;">LIFETIME EARNINGS</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: ${isMobile ? 'center' : 'right'};">
+                                <p class="glow-text count-animation" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${revenueSize}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin: 0; text-shadow: 0 4px 12px rgba(108, 142, 184, 0.4);">$${totalRevenue.toFixed(2)}</p>
+                                <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${baseSize * (isMobile ? 0.75 : 0.875)}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: ${isMobile ? '8px 0 0 0' : '8px 0 0 0'}; opacity: 0.8;">from ${totalSales} transaction${totalSales !== 1 ? 's' : ''}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProductManagement() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            return `
+                <div style="padding: ${isMobile ? '12px' : '20px'};">
+                    <div class="fade-in-1" style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <h1 class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.5}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '12px' : '16px'} 0; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase; text-align: center;">PRODUCT ARSENAL</h1>
+                        <button onclick="showAddProductModal()" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '12px 16px' : '14px 24px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; letter-spacing: 1px; text-transform: uppercase;">⚡ ADD PRODUCT</button>
+                    </div>
+
+                    <div class="fade-in-2" style="display: grid; grid-template-columns: ${isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(140px, 1fr))'}; gap: ${isMobile ? '8px' : '12px'}; margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <button onclick="currentView='products'; renderApp();" class="card-hover" style="background: linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%); border: 2px solid ${config.primary_color || defaultConfig.primary_color}; padding: ${isMobile ? '16px' : '20px'}; border-radius: ${isMobile ? '10px' : '12px'}; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize * 1.125}px; font-weight: 700; color: ${config.primary_color || defaultConfig.primary_color}; transition: all 0.3s; letter-spacing: 1px;">📋 VIEW ALL</button>
+                        <button onclick="showSearchProductModal()" class="card-hover" style="background: linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%); border: 2px solid ${config.primary_color || defaultConfig.primary_color}; padding: ${isMobile ? '16px' : '20px'}; border-radius: ${isMobile ? '10px' : '12px'}; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize * 1.125}px; font-weight: 700; color: ${config.primary_color || defaultConfig.primary_color}; transition: all 0.3s; letter-spacing: 1px;">🔍 SEARCH</button>
+                        <button onclick="showLowStockModal()" class="card-hover" style="background: linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%); border: 2px solid ${config.primary_color || defaultConfig.primary_color}; padding: ${isMobile ? '16px' : '20px'}; border-radius: ${isMobile ? '10px' : '12px'}; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize * 1.125}px; font-weight: 700; color: ${config.primary_color || defaultConfig.primary_color}; transition: all 0.3s; letter-spacing: 1px;">⚠️ LOW STOCK</button>
+                    </div>
+
+                    ${products.length === 0 ? `
+                        <div class="fade-in-3" style="background: linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%); border-radius: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '40px 20px' : '80px'}; text-align: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); border: 2px solid ${config.primary_color || defaultConfig.primary_color};">
+                            <div style="font-size: ${isMobile ? '60px' : '100px'}; margin-bottom: ${isMobile ? '16px' : '24px'};">📦</div>
+                            <h3 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.5 : baseSize * 2}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '12px'}; letter-spacing: ${isMobile ? '1px' : '2px'};">NO PRODUCTS IN ARSENAL</h3>
+                            <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; color: ${config.accent_color || defaultConfig.accent_color}; font-weight: 600;">DEPLOY YOUR FIRST PRODUCT TO BEGIN OPERATIONS</p>
+                        </div>
+                    ` : `
+                        <div class="product-table fade-in-3" style="border-radius: ${isMobile ? '12px' : '20px'}; overflow-x: auto; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); border: 2px solid ${config.primary_color || defaultConfig.primary_color};">
+                            <table style="width: 100%; min-width: ${isMobile ? '600px' : '800px'}; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%);">
+                                        <th style="padding: ${isMobile ? '12px 8px' : '20px'}; text-align: left; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: white; letter-spacing: 1px; text-transform: uppercase;">ID</th>
+                                        <th style="padding: ${isMobile ? '12px 8px' : '20px'}; text-align: left; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: white; letter-spacing: 1px; text-transform: uppercase;">Name</th>
+                                        <th style="padding: ${isMobile ? '12px 8px' : '20px'}; text-align: left; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: white; letter-spacing: 1px; text-transform: uppercase;">Category</th>
+                                        <th style="padding: ${isMobile ? '12px 8px' : '20px'}; text-align: left; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: white; letter-spacing: 1px; text-transform: uppercase;">Stock</th>
+                                        <th style="padding: ${isMobile ? '12px 8px' : '20px'}; text-align: left; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: white; letter-spacing: 1px; text-transform: uppercase;">Price</th>
+                                        <th style="padding: ${isMobile ? '12px 8px' : '20px'}; text-align: left; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: white; letter-spacing: 1px; text-transform: uppercase;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${products.map((product, index) => `
+                                        <tr class="table-row" style="border-bottom: 1px solid rgba(255, 107, 0, 0.2); background: ${index % 2 === 0 ? 'rgba(30, 41, 59, 0.5)' : 'transparent'};">
+                                            <td style="padding: ${isMobile ? '12px 8px' : '20px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.accent_color || defaultConfig.accent_color}; font-weight: 700;">#${product.id}</td>
+                                            <td style="padding: ${isMobile ? '12px 8px' : '20px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color};">${product.name}</td>
+                                            <td style="padding: ${isMobile ? '12px 8px' : '20px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color};">${product.category}</td>
+                                            <td style="padding: ${isMobile ? '12px 8px' : '20px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; color: ${product.quantity < 10 ? '#ef4444' : config.accent_color || defaultConfig.accent_color}; font-weight: bold;">${product.quantity}${product.quantity < 10 ? ' ⚡' : ''}</td>
+                                            <td style="padding: ${isMobile ? '12px 8px' : '20px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.primary_color || defaultConfig.primary_color}; font-weight: bold;">$${product.price.toFixed(2)}</td>
+                                            <td style="padding: ${isMobile ? '12px 8px' : '20px'};">
+                                                <button onclick='showUpdateProductModal("${product.__backendId}")' class="btn-primary" style="background: linear-gradient(135deg, ${config.accent_color || defaultConfig.accent_color} 0%, #00a67e 100%); color: white; padding: ${isMobile ? '6px 10px' : '10px 20px'}; border-radius: ${isMobile ? '6px' : '8px'}; border: none; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; margin-right: ${isMobile ? '4px' : '8px'}; margin-bottom: ${isMobile ? '4px' : '0'}; font-weight: 700; letter-spacing: 1px;">EDIT</button>
+                                                <button onclick='showProductDetails("${product.__backendId}")' class="btn-primary" style="background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '6px 10px' : '10px 20px'}; border-radius: ${isMobile ? '6px' : '8px'}; border: none; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; margin-right: ${isMobile ? '4px' : '8px'}; margin-bottom: ${isMobile ? '4px' : '0'}; font-weight: 700; letter-spacing: 1px;">VIEW</button>
+                                                <button id="deleteBtn_${product.__backendId}" onclick='confirmDeleteProduct("${product.__backendId}")' class="btn-primary" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: ${isMobile ? '6px 10px' : '10px 20px'}; border-radius: ${isMobile ? '6px' : '8px'}; border: none; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; font-weight: 700; letter-spacing: 1px;">DELETE</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function renderSupplierManagement() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            return `
+                <div style="padding: ${isMobile ? '12px' : '20px'};">
+                    <div class="fade-in-1" style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <h1 class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.5}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '12px' : '16px'} 0; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase; text-align: center;">SUPPLIER NETWORK</h1>
+                        <button onclick="showAddSupplierModal()" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '12px 16px' : '14px 24px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; letter-spacing: 1px; text-transform: uppercase;">⚡ ADD SUPPLIER</button>
+                    </div>
+
+                    <div class="fade-in-2" style="display: grid; grid-template-columns: ${isMobile ? '1fr' : 'repeat(auto-fit, minmax(140px, 1fr))'}; gap: ${isMobile ? '8px' : '12px'}; margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <button onclick="currentView='suppliers'; renderApp();" class="card-hover" style="background: linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%); border: 2px solid ${config.primary_color || defaultConfig.primary_color}; padding: ${isMobile ? '16px' : '20px'}; border-radius: ${isMobile ? '10px' : '12px'}; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize * 1.125}px; font-weight: 700; color: ${config.primary_color || defaultConfig.primary_color}; transition: all 0.3s; letter-spacing: 1px;">📋 VIEW ALL</button>
+                        <button onclick="showLinkProductModal()" class="card-hover" style="background: linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%); border: 2px solid ${config.primary_color || defaultConfig.primary_color}; padding: ${isMobile ? '16px' : '20px'}; border-radius: ${isMobile ? '10px' : '12px'}; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize * 1.125}px; font-weight: 700; color: ${config.primary_color || defaultConfig.primary_color}; transition: all 0.3s; letter-spacing: 1px;">🔗 LINK PRODUCT</button>
+                    </div>
+
+                    ${suppliers.length === 0 ? `
+                        <div class="fade-in-3" style="background: linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%); border-radius: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '40px 20px' : '80px'}; text-align: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); border: 2px solid ${config.primary_color || defaultConfig.primary_color};">
+                            <div style="font-size: ${isMobile ? '60px' : '100px'}; margin-bottom: ${isMobile ? '16px' : '24px'};">🚚</div>
+                            <h3 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.5 : baseSize * 2}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '12px'}; letter-spacing: ${isMobile ? '1px' : '2px'};">NO SUPPLIERS CONNECTED</h3>
+                            <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; color: ${config.accent_color || defaultConfig.accent_color}; font-weight: 600;">ESTABLISH YOUR SUPPLY CHAIN NETWORK</p>
+                        </div>
+                    ` : `
+                        <div class="fade-in-3" style="display: grid; grid-template-columns: ${isMobile ? '1fr' : 'repeat(auto-fill, minmax(340px, 1fr))'}; gap: ${isMobile ? '16px' : '24px'};">
+                            ${suppliers.map((supplier, index) => `
+                                <div class="supplier-card card-hover slide-in-${(index % 4) + 1}" style="border-radius: 16px; padding: ${isMobile ? '20px' : '28px'}; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);">
+                                    <div style="display: flex; align-items: center; margin-bottom: ${isMobile ? '16px' : '20px'};">
+                                        <div class="icon-float" style="background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); width: ${isMobile ? '48px' : '60px'}; height: ${isMobile ? '48px' : '60px'}; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: ${isMobile ? '24px' : '30px'}; margin-right: ${isMobile ? '16px' : '20px'}; box-shadow: 0 6px 20px rgba(255, 107, 0, 0.5);">🚚</div>
+                                        <div>
+                                            <h3 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.125 : baseSize * 1.25}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin: 0; letter-spacing: 1px;">${supplier.name}</h3>
+                                            <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0; font-weight: 600;">ID: #${supplier.id}</p>
+                                        </div>
+                                    </div>
+                                    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: ${isMobile ? '12px' : '16px'}; margin-bottom: ${isMobile ? '8px' : '12px'};">
+                                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: 0;"><strong style="color: ${config.primary_color || defaultConfig.primary_color};">📞 PHONE:</strong> ${supplier.phonenumber}</p>
+                                    </div>
+                                    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: ${isMobile ? '12px' : '16px'}; margin-bottom: ${isMobile ? '12px' : '16px'};">
+                                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: 0; word-break: break-all;"><strong style="color: ${config.primary_color || defaultConfig.primary_color};">✉️ EMAIL:</strong> ${supplier.email}</p>
+                                    </div>
+                                    <button id="deleteSupplierBtn_${supplier.__backendId}" onclick='confirmDeleteSupplier("${supplier.__backendId}")' class="btn-primary" style="width: 100%; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: ${isMobile ? '10px' : '12px'}; border-radius: ${isMobile ? '8px' : '10px'}; border: none; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; font-weight: 700; letter-spacing: 1px;">🗑️ DELETE SUPPLIER</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function renderSalesManagement() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            return `
+                <div style="padding: ${isMobile ? '12px' : '20px'};">
+                    <div class="fade-in-1" style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <h1 class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.5}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '12px' : '16px'} 0; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase; text-align: center;">SALES OPERATIONS</h1>
+                        <button onclick="showNewSaleModal()" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '12px 16px' : '14px 24px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; letter-spacing: 1px; text-transform: uppercase;">⚡ NEW SALE</button>
+                    </div>
+
+                    ${sales.length === 0 ? `
+                        <div class="fade-in-2" style="background: linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%); border-radius: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '40px 20px' : '80px'}; text-align: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); border: 2px solid ${config.primary_color || defaultConfig.primary_color};">
+                            <div style="font-size: ${isMobile ? '60px' : '100px'}; margin-bottom: ${isMobile ? '16px' : '24px'};">💰</div>
+                            <h3 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.5 : baseSize * 2}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '12px'}; letter-spacing: ${isMobile ? '1px' : '2px'};">NO SALES RECORDED</h3>
+                            <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; color: ${config.accent_color || defaultConfig.accent_color}; font-weight: 600;">INITIATE YOUR FIRST TRANSACTION</p>
+                        </div>
+                    ` : `
+                        <div class="fade-in-2" style="display: grid; gap: ${isMobile ? '16px' : '24px'};">
+                            ${sales.map((sale, index) => {
+                                const items = JSON.parse(sale.items);
+                                return `
+                                    <div class="sale-card card-hover slide-in-${(index % 4) + 1}" style="border-radius: 16px; padding: ${isMobile ? '20px' : '32px'}; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);">
+                                        <div style="display: flex; ${isMobile ? 'flex-direction: column; gap: 12px;' : 'justify-content: space-between; align-items: start;'} margin-bottom: ${isMobile ? '16px' : '24px'};">
+                                            <div>
+                                                <h3 class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.5}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin: 0 0 ${isMobile ? '8px' : '12px'} 0; letter-spacing: ${isMobile ? '1px' : '2px'};">SALE #${sale.saleID}</h3>
+                                                <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '4px' : '8px'} 0;"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">CUSTOMER:</strong> ${sale.customerName}</p>
+                                                <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: 0;"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">DATE:</strong> ${sale.date}</p>
+                                            </div>
+                                            <div style="text-align: ${isMobile ? 'left' : 'right'};">
+                                                <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0 0 ${isMobile ? '4px' : '8px'} 0; font-weight: 600; letter-spacing: 1px;">TOTAL</p>
+                                                <p class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.5 : baseSize * 2}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin: 0;">$${sale.grandTotal.toFixed(2)}</p>
+                                            </div>
+                                        </div>
+                                        <div style="border-top: 2px solid rgba(255, 107, 0, 0.3); padding-top: ${isMobile ? '12px' : '20px'};">
+                                            <h4 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '12px' : '16px'} 0; letter-spacing: 1px; text-transform: uppercase;">ITEMS PURCHASED:</h4>
+                                            ${items.map(item => `
+                                                <div style="display: flex; justify-content: space-between; margin-bottom: ${isMobile ? '8px' : '12px'}; padding: ${isMobile ? '8px' : '12px'}; background: rgba(255, 107, 0, 0.1); border-radius: 8px; border: 1px solid rgba(255, 107, 0, 0.3);">
+                                                    <span style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; font-weight: 600;">${item.productName} <span style="color: ${config.accent_color || defaultConfig.accent_color};">(×${item.quantity})</span></span>
+                                                    <span style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.primary_color || defaultConfig.primary_color};">$${item.itemTotal.toFixed(2)}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                        <button id="deleteSaleBtn_${sale.__backendId}" onclick='confirmDeleteSale("${sale.__backendId}")' class="btn-primary" style="width: 100%; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: ${isMobile ? '12px' : '14px'}; border-radius: ${isMobile ? '8px' : '10px'}; border: none; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; margin-top: ${isMobile ? '12px' : '16px'}; letter-spacing: 1px;">🗑️ DELETE SALE</button>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function showAddProductModal() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const modalContent = `
+                <form id="productForm" style="width: ${isMobile ? '100%' : '600px'};">
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Product ID</label>
+                        <input type="number" id="productId" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Product Name</label>
+                        <input type="text" id="productName" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Description</label>
+                        <textarea id="productDescription" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; min-height: ${isMobile ? '80px' : '100px'}; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};"></textarea>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Category</label>
+                        <input type="text" id="productCategory" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Quantity</label>
+                        <input type="number" id="productQuantity" required min="0" style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '24px' : '32px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Price ($)</label>
+                        <input type="number" id="productPrice" required min="0" step="0.01" style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="display: flex; gap: ${isMobile ? '12px' : '16px'}; flex-direction: ${isMobile ? 'column' : 'row'};">
+                        <button type="submit" id="submitBtn" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✓ ADD PRODUCT</button>
+                        <button type="button" onclick="closeModal()" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✗ CANCEL</button>
+                    </div>
+                </form>
+            `;
+            showModal('DEPLOY NEW PRODUCT', modalContent);
+
+            setTimeout(() => {
+                document.getElementById('productForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await addProduct({
+                        id: parseInt(document.getElementById('productId').value),
+                        name: document.getElementById('productName').value,
+                        description: document.getElementById('productDescription').value,
+                        category: document.getElementById('productCategory').value,
+                        quantity: parseInt(document.getElementById('productQuantity').value),
+                        price: parseFloat(document.getElementById('productPrice').value),
+                        supplierID: 0
+                    });
+                });
+            }, 100);
+        }
+
+        function showUpdateProductModal(backendId) {
+            const product = products.find(p => p.__backendId === backendId);
+            if (!product) return;
+
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const modalContent = `
+                <form id="updateForm" style="width: ${isMobile ? '100%' : '600px'};">
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Description</label>
+                        <textarea id="updateDescription" style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; min-height: ${isMobile ? '80px' : '100px'}; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">${product.description}</textarea>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '24px' : '32px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Price ($)</label>
+                        <input type="number" id="updatePrice" value="${product.price}" step="0.01" min="0" style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="display: flex; gap: ${isMobile ? '12px' : '16px'}; flex-direction: ${isMobile ? 'column' : 'row'};">
+                        <button type="submit" id="submitBtn" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✓ UPDATE</button>
+                        <button type="button" onclick="closeModal()" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✗ CANCEL</button>
+                    </div>
+                </form>
+            `;
+            showModal(`UPDATE ${product.name}`, modalContent);
+
+            setTimeout(() => {
+                document.getElementById('updateForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await updateProduct(backendId, {
+                        description: document.getElementById('updateDescription').value,
+                        price: parseFloat(document.getElementById('updatePrice').value)
+                    });
+                });
+            }, 100);
+        }
+
+        function showProductDetails(backendId) {
+            const product = products.find(p => p.__backendId === backendId);
+            if (!product) return;
+
+            const supplier = getSupplierById(product.supplierID);
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const detailsHTML = `
+                <div style="width: ${isMobile ? '100%' : '600px'};">
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '16px' : '20px'}; background: rgba(255, 107, 0, 0.1); border-radius: ${isMobile ? '10px' : '12px'}; border: 1px solid ${config.primary_color || defaultConfig.primary_color};">
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0 0 ${isMobile ? '4px' : '8px'} 0; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Product ID</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.125 : baseSize * 1.25}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin: 0;">#${product.id}</p>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '16px' : '20px'}; background: rgba(255, 107, 0, 0.1); border-radius: ${isMobile ? '10px' : '12px'}; border: 1px solid ${config.primary_color || defaultConfig.primary_color};">
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0 0 ${isMobile ? '4px' : '8px'} 0; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Name</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.125 : baseSize * 1.25}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin: 0;">${product.name}</p>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '16px' : '20px'}; background: rgba(255, 107, 0, 0.1); border-radius: ${isMobile ? '10px' : '12px'}; border: 1px solid ${config.primary_color || defaultConfig.primary_color};">
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0 0 ${isMobile ? '4px' : '8px'} 0; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Description</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: 0;">${product.description}</p>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '16px' : '20px'}; background: rgba(255, 107, 0, 0.1); border-radius: ${isMobile ? '10px' : '12px'}; border: 1px solid ${config.primary_color || defaultConfig.primary_color};">
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0 0 ${isMobile ? '4px' : '8px'} 0; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Category</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.125 : baseSize * 1.25}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin: 0;">${product.category}</p>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '16px' : '20px'}; background: rgba(255, 107, 0, 0.1); border-radius: ${isMobile ? '10px' : '12px'}; border: 1px solid ${config.primary_color || defaultConfig.primary_color};">
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0 0 ${isMobile ? '4px' : '8px'} 0; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Quantity</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.5}px; font-weight: bold; color: ${product.quantity < 10 ? '#ef4444' : config.accent_color || defaultConfig.accent_color}; margin: 0;">${product.quantity} ${product.quantity < 10 ? '⚠️ LOW STOCK' : ''}</p>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '16px' : '20px'}; background: rgba(255, 107, 0, 0.1); border-radius: ${isMobile ? '10px' : '12px'}; border: 1px solid ${config.primary_color || defaultConfig.primary_color};">
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0 0 ${isMobile ? '4px' : '8px'} 0; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Price</p>
+                        <p class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.5 : baseSize * 1.75}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin: 0;">$${product.price.toFixed(2)}</p>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '24px' : '32px'}; padding: ${isMobile ? '16px' : '20px'}; background: rgba(255, 107, 0, 0.1); border-radius: ${isMobile ? '10px' : '12px'}; border: 1px solid ${config.primary_color || defaultConfig.primary_color};">
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; color: ${config.accent_color || defaultConfig.accent_color}; margin: 0 0 ${isMobile ? '4px' : '8px'} 0; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Supplier</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.125 : baseSize * 1.25}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin: 0;">${supplier ? supplier.name : 'NOT ASSIGNED'}</p>
+                    </div>
+                    <button onclick="closeModal()" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✗ CLOSE</button>
+                </div>
+            `;
+            showModal('PRODUCT INTEL', detailsHTML);
+        }
+
+        function showSearchProductModal() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const modalContent = `
+                <div style="width: ${isMobile ? '100%' : '600px'};">
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Search by ID</label>
+                        <div style="display: flex; gap: ${isMobile ? '8px' : '12px'}; flex-direction: ${isMobile ? 'column' : 'row'};">
+                            <input type="number" id="searchId" placeholder="Enter product ID" style="flex: 1; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                            <button onclick="searchProductById()" class="btn-primary" style="background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '12px 16px' : '14px 28px'}; border-radius: ${isMobile ? '8px' : '10px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; letter-spacing: 1px; text-transform: uppercase;">🔍 SEARCH</button>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '24px' : '32px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Search by Name</label>
+                        <div style="display: flex; gap: ${isMobile ? '8px' : '12px'}; flex-direction: ${isMobile ? 'column' : 'row'};">
+                            <input type="text" id="searchName" placeholder="Enter product name" style="flex: 1; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                            <button onclick="searchProductByName()" class="btn-primary" style="background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '12px 16px' : '14px 28px'}; border-radius: ${isMobile ? '8px' : '10px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; letter-spacing: 1px; text-transform: uppercase;">🔍 SEARCH</button>
+                        </div>
+                    </div>
+                    <div id="searchResults"></div>
+                    <button onclick="closeModal()" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; margin-top: ${isMobile ? '16px' : '20px'}; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✗ CLOSE</button>
+                </div>
+            `;
+            showModal('PRODUCT SEARCH', modalContent);
+        }
+
+        function searchProductById() {
+            const id = parseInt(document.getElementById('searchId').value);
+            const product = products.find(p => p.id === id);
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const resultsDiv = document.getElementById('searchResults');
+            if (product) {
+                resultsDiv.innerHTML = `
+                    <div style="padding: ${isMobile ? '16px' : '24px'}; background: linear-gradient(135deg, rgba(0, 212, 170, 0.2) 0%, rgba(0, 212, 170, 0.1) 100%); border: 2px solid ${config.accent_color || defaultConfig.accent_color}; border-radius: ${isMobile ? '10px' : '12px'}; animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                        <h3 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.5}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '12px' : '16px'} 0; letter-spacing: 1px;">✓ ${product.name}</h3>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: ${isMobile ? '6px 0' : '8px 0'};"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">ID:</strong> #${product.id}</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: ${isMobile ? '6px 0' : '8px 0'};"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">CATEGORY:</strong> ${product.category}</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: ${isMobile ? '6px 0' : '8px 0'};"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">PRICE:</strong> <span style="color: ${config.primary_color || defaultConfig.primary_color}; font-weight: bold;">$${product.price.toFixed(2)}</span></p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: ${isMobile ? '6px 0' : '8px 0'};"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">STOCK:</strong> <span style="color: ${product.quantity < 10 ? '#ef4444' : config.accent_color || defaultConfig.accent_color}; font-weight: bold;">${product.quantity}</span></p>
+                    </div>
+                `;
+            } else {
+                resultsDiv.innerHTML = `<div style="padding: ${isMobile ? '16px' : '24px'}; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%); border: 2px solid #ef4444; border-radius: ${isMobile ? '10px' : '12px'}; color: #ef4444; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; font-weight: 700; text-align: center; letter-spacing: 1px; animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);">✗ PRODUCT NOT FOUND IN DATABASE!</div>`;
+            }
+        }
+
+        function searchProductByName() {
+            const name = document.getElementById('searchName').value.toLowerCase();
+            const product = products.find(p => p.name.toLowerCase() === name);
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const resultsDiv = document.getElementById('searchResults');
+            if (product) {
+                resultsDiv.innerHTML = `
+                    <div style="padding: ${isMobile ? '16px' : '24px'}; background: linear-gradient(135deg, rgba(0, 212, 170, 0.2) 0%, rgba(0, 212, 170, 0.1) 100%); border: 2px solid ${config.accent_color || defaultConfig.accent_color}; border-radius: ${isMobile ? '10px' : '12px'}; animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                        <h3 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.5}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '12px' : '16px'} 0; letter-spacing: 1px;">✓ ${product.name}</h3>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: ${isMobile ? '6px 0' : '8px 0'};"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">ID:</strong> #${product.id}</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: ${isMobile ? '6px 0' : '8px 0'};"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">CATEGORY:</strong> ${product.category}</p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: ${isMobile ? '6px 0' : '8px 0'};"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">PRICE:</strong> <span style="color: ${config.primary_color || defaultConfig.primary_color}; font-weight: bold;">$${product.price.toFixed(2)}</span></p>
+                        <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; margin: ${isMobile ? '6px 0' : '8px 0'};"><strong style="color: ${config.accent_color || defaultConfig.accent_color};">STOCK:</strong> <span style="color: ${product.quantity < 10 ? '#ef4444' : config.accent_color || defaultConfig.accent_color}; font-weight: bold;">${product.quantity}</span></p>
+                    </div>
+                `;
+            } else {
+                resultsDiv.innerHTML = `<div style="padding: ${isMobile ? '16px' : '24px'}; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%); border: 2px solid #ef4444; border-radius: ${isMobile ? '10px' : '12px'}; color: #ef4444; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; font-weight: 700; text-align: center; letter-spacing: 1px; animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);">✗ PRODUCT NOT FOUND IN DATABASE!</div>`;
+            }
+        }
+
+        function showLowStockModal() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const modalContent = `
+                <div style="width: ${isMobile ? '100%' : '600px'};">
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Minimum Threshold</label>
+                        <input type="number" id="threshold" value="10" min="1" style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <button onclick="checkLowStock()" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; margin-bottom: ${isMobile ? '16px' : '20px'}; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">⚠️ CHECK LOW STOCK</button>
+                    <div id="lowStockResults"></div>
+                    <button onclick="closeModal()" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; margin-top: ${isMobile ? '16px' : '20px'}; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✗ CLOSE</button>
+                </div>
+            `;
+            showModal('LOW STOCK ALERT', modalContent);
+        }
+
+        function checkLowStock() {
+            const threshold = parseInt(document.getElementById('threshold').value);
+            const lowStock = products.filter(p => p.quantity < threshold);
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const resultsDiv = document.getElementById('lowStockResults');
+            if (lowStock.length === 0) {
+                resultsDiv.innerHTML = `<div style="padding: ${isMobile ? '16px' : '24px'}; background: linear-gradient(135deg, rgba(0, 212, 170, 0.2) 0%, rgba(0, 212, 170, 0.1) 100%); border: 2px solid ${config.accent_color || defaultConfig.accent_color}; border-radius: ${isMobile ? '10px' : '12px'}; color: ${config.accent_color || defaultConfig.accent_color}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; font-weight: 700; text-align: center; letter-spacing: 1px; animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);">✓ ALL PRODUCTS SUFFICIENTLY STOCKED!</div>`;
+            } else {
+                resultsDiv.innerHTML = `
+                    <div style="padding: ${isMobile ? '16px' : '24px'}; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%); border: 2px solid #ef4444; border-radius: ${isMobile ? '10px' : '12px'}; animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                        <h3 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.5}px; font-weight: bold; color: #ef4444; margin: 0 0 ${isMobile ? '16px' : '20px'} 0; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">⚠️ CRITICAL STOCK LEVELS</h3>
+                        ${lowStock.map(product => `
+                            <div style="padding: ${isMobile ? '8px' : '12px'}; background: rgba(0, 0, 0, 0.3); border-radius: ${isMobile ? '6px' : '8px'}; margin-bottom: ${isMobile ? '8px' : '12px'}; border-left: 4px solid #ef4444;">
+                                <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '2px' : '4px'} 0;">${product.name} <span style="color: ${config.accent_color || defaultConfig.accent_color};">(ID: #${product.id})</span></p>
+                                <p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: #ef4444; margin: 0; font-weight: bold;">STOCK: ${product.quantity} UNITS</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        function showAddSupplierModal() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const modalContent = `
+                <form id="supplierForm" style="width: ${isMobile ? '100%' : '600px'};">
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Supplier ID</label>
+                        <input type="number" id="supplierId" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Supplier Name</label>
+                        <input type="text" id="supplierName" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Phone Number</label>
+                        <input type="text" id="supplierPhone" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '24px' : '32px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Email</label>
+                        <input type="email" id="supplierEmail" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                    </div>
+                    <div style="display: flex; gap: ${isMobile ? '12px' : '16px'}; flex-direction: ${isMobile ? 'column' : 'row'};">
+                        <button type="submit" id="submitBtn" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✓ ADD SUPPLIER</button>
+                        <button type="button" onclick="closeModal()" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✗ CANCEL</button>
+                    </div>
+                </form>
+            `;
+            showModal('CONNECT NEW SUPPLIER', modalContent);
+
+            setTimeout(() => {
+                document.getElementById('supplierForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await addSupplier({
+                        id: parseInt(document.getElementById('supplierId').value),
+                        name: document.getElementById('supplierName').value,
+                        phonenumber: document.getElementById('supplierPhone').value,
+                        email: document.getElementById('supplierEmail').value
+                    });
+                });
+            }, 100);
+        }
+
+        function showLinkProductModal() {
+            if (products.length === 0 || suppliers.length === 0) {
+                showToast('⚠️ REQUIRES PRODUCTS AND SUPPLIERS!', 'error');
+                return;
+            }
+
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const modalContent = `
+                <form id="linkForm" style="width: ${isMobile ? '100%' : '600px'};">
+                    <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Select Product</label>
+                        <select id="linkProductId" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                            <option value="">CHOOSE A PRODUCT...</option>
+                            ${products.map(p => `<option value="${p.id}">${p.name} (ID: #${p.id})</option>`).join('')}
+                        </select>
+                    </div>
+                    <div style="margin-bottom: ${isMobile ? '24px' : '32px'};">
+                        <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Select Supplier</label>
+                        <select id="linkSupplierId" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                            <option value="">CHOOSE A SUPPLIER...</option>
+                            ${suppliers.map(s => `<option value="${s.id}">${s.name} (ID: #${s.id})</option>`).join('')}
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: ${isMobile ? '12px' : '16px'}; flex-direction: ${isMobile ? 'column' : 'row'};">
+                        <button type="submit" id="submitBtn" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">🔗 LINK PRODUCT</button>
+                        <button type="button" onclick="closeModal()" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✗ CANCEL</button>
+                    </div>
+                </form>
+            `;
+            showModal('LINK PRODUCT TO SUPPLIER', modalContent);
+
+            setTimeout(() => {
+                document.getElementById('linkForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await linkProductToSupplier(
+                        parseInt(document.getElementById('linkProductId').value),
+                        parseInt(document.getElementById('linkSupplierId').value)
+                    );
+                });
+            }, 100);
+        }
+
+        let saleItems = [];
+
+        function showNewSaleModal() {
+            if (products.length === 0) {
+                showToast('⚠️ ADD PRODUCTS FIRST!', 'error');
+                return;
+            }
+
+            saleItems = [];
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const modalContent = `
+                <div style="width: ${isMobile ? '100%' : '700px'};">
+                    <form id="saleInfoForm" style="margin-bottom: ${isMobile ? '24px' : '32px'};">
+                        <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                            <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Sale ID</label>
+                            <input type="number" id="saleId" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                        </div>
+                        <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                            <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Customer Name</label>
+                            <input type="text" id="customerName" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                        </div>
+                        <div style="margin-bottom: ${isMobile ? '16px' : '20px'};">
+                            <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Date (DD/MM/YYYY)</label>
+                            <input type="text" id="saleDate" required placeholder="DD/MM/YYYY" style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                        </div>
+                    </form>
+
+                    <div style="border-top: 3px solid ${config.primary_color || defaultConfig.primary_color}; padding-top: ${isMobile ? '16px' : '24px'}; margin-bottom: ${isMobile ? '16px' : '24px'};">
+                        <h3 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.125 : baseSize * 1.25}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '16px' : '20px'} 0; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">ADD ITEMS TO SALE</h3>
+                        <form id="addItemForm">
+                            <div style="margin-bottom: ${isMobile ? '12px' : '16px'};">
+                                <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Select Product</label>
+                                <select id="itemProductId" required style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                                    <option value="">CHOOSE A PRODUCT...</option>
+                                    ${products.filter(p => p.quantity > 0).map(p => `<option value="${p.id}">${p.name} (STOCK: ${p.quantity})</option>`).join('')}
+                                </select>
+                            </div>
+                            <div style="margin-bottom: ${isMobile ? '12px' : '16px'};">
+                                <label style="display: block; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin-bottom: ${isMobile ? '8px' : '10px'}; letter-spacing: 1px; text-transform: uppercase;">Quantity</label>
+                                <input type="number" id="itemQuantity" required min="1" style="width: 100%; padding: ${isMobile ? '12px' : '14px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '8px' : '10px'}; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? '16px' : baseSize}px; background: rgba(30, 41, 59, 0.7); color: ${config.text_color || defaultConfig.text_color};">
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, ${config.accent_color || defaultConfig.accent_color} 0%, #00a67e 100%); color: white; padding: ${isMobile ? '12px' : '14px'}; border-radius: ${isMobile ? '8px' : '10px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; letter-spacing: 1px; text-transform: uppercase;">➕ ADD ITEM</button>
+                        </form>
+                    </div>
+
+                    <div id="saleItemsList" style="margin-bottom: ${isMobile ? '16px' : '24px'};"></div>
+
+                    <div style="border-top: 3px solid ${config.primary_color || defaultConfig.primary_color}; padding-top: ${isMobile ? '16px' : '24px'}; display: flex; gap: ${isMobile ? '12px' : '16px'}; flex-direction: ${isMobile ? 'column' : 'row'};">
+                        <button onclick="completeSale()" id="submitBtn" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, #ff8c00 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✓ COMPLETE SALE</button>
+                        <button onclick="closeModal(); saleItems = [];" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white; padding: ${isMobile ? '14px' : '16px'}; border-radius: ${isMobile ? '10px' : '12px'}; border: none; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">✗ CANCEL</button>
+                    </div>
+                </div>
+            `;
+            showModal('PROCESS NEW SALE', modalContent);
+
+            setTimeout(() => {
+                document.getElementById('addItemForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    addItemToSale();
+                });
+            }, 100);
+        }
+
+        function addItemToSale() {
+            const productId = parseInt(document.getElementById('itemProductId').value);
+            const quantity = parseInt(document.getElementById('itemQuantity').value);
+            const product = products.find(p => p.id === productId);
+
+            if (!product) {
+                showToast('✗ PRODUCT NOT FOUND!', 'error');
+                return;
+            }
+
+            if (quantity > product.quantity) {
+                showToast('✗ INSUFFICIENT STOCK!', 'error');
+                return;
+            }
+
+            if (quantity <= 0) {
+                showToast('✗ INVALID QUANTITY!', 'error');
+                return;
+            }
+
+            const item = {
+                productID: product.id,
+                productName: product.name,
+                quantity: quantity,
+                unitPrice: product.price,
+                itemTotal: quantity * product.price
+            };
+
+            saleItems.push(item);
+            updateSaleItemsList();
+            document.getElementById('addItemForm').reset();
+            showToast('✓ ITEM ADDED TO CART!');
+        }
+
+        function updateSaleItemsList() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const listDiv = document.getElementById('saleItemsList');
+            if (saleItems.length === 0) {
+                listDiv.innerHTML = `<p style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.accent_color || defaultConfig.accent_color}; text-align: center; font-weight: 600; letter-spacing: 1px; padding: ${isMobile ? '16px' : '20px'};">NO ITEMS ADDED YET</p>`;
+                return;
+            }
+
+            const grandTotal = saleItems.reduce((sum, item) => sum + item.itemTotal, 0);
+            listDiv.innerHTML = `
+                <div style="background: rgba(255, 107, 0, 0.1); border: 2px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '10px' : '12px'}; padding: ${isMobile ? '16px' : '20px'};">
+                    <h4 style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize : baseSize * 1.125}px; font-weight: 700; color: ${config.text_color || defaultConfig.text_color}; margin: 0 0 ${isMobile ? '12px' : '16px'} 0; letter-spacing: 1px; text-transform: uppercase;">ITEMS IN CART:</h4>
+                    ${saleItems.map((item, index) => `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: ${isMobile ? '8px' : '12px'}; padding: ${isMobile ? '8px' : '12px'}; background: rgba(0, 0, 0, 0.3); border-radius: ${isMobile ? '6px' : '8px'}; border-left: 4px solid ${config.primary_color || defaultConfig.primary_color};">
+                            <span style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; color: ${config.text_color || defaultConfig.text_color}; font-weight: 600;">${item.productName} <span style="color: ${config.accent_color || defaultConfig.accent_color};">×${item.quantity}</span></span>
+                            <span style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.875 : baseSize}px; font-weight: 700; color: ${config.primary_color || defaultConfig.primary_color};">$${item.itemTotal.toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                    <div style="border-top: 2px solid ${config.primary_color || defaultConfig.primary_color}; margin-top: ${isMobile ? '12px' : '16px'}; padding-top: ${isMobile ? '12px' : '16px'}; display: flex; justify-content: space-between;">
+                        <span class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.125 : baseSize * 1.25}px; font-weight: bold; color: ${config.text_color || defaultConfig.text_color}; letter-spacing: ${isMobile ? '1px' : '2px'}; text-transform: uppercase;">GRAND TOTAL:</span>
+                        <span class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.5}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color};">$${grandTotal.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function completeSale() {
+            if (saleItems.length === 0) {
+                showToast('⚠️ ADD AT LEAST ONE ITEM!', 'error');
+                return;
+            }
+
+            const saleId = parseInt(document.getElementById('saleId').value);
+            const customerName = document.getElementById('customerName').value;
+            const date = document.getElementById('saleDate').value;
+
+            if (!saleId || !customerName || !date) {
+                showToast('⚠️ COMPLETE ALL SALE INFO!', 'error');
+                return;
+            }
+
+            const grandTotal = saleItems.reduce((sum, item) => sum + item.itemTotal, 0);
+
+            await processSale({
+                saleID: saleId,
+                customerName: customerName,
+                date: date,
+                items: saleItems,
+                grandTotal: grandTotal
+            });
+        }
+
+        async function confirmDeleteProduct(backendId) {
+            const product = products.find(p => p.__backendId === backendId);
+            if (!product) return;
+
+            const deleteBtn = document.getElementById(`deleteBtn_${backendId}`);
+            if (!deleteBtn) return;
+
+            if (deleteBtn.textContent === 'DELETE') {
+                deleteBtn.textContent = 'CONFIRM DELETE?';
+                deleteBtn.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
+                
+                setTimeout(() => {
+                    if (deleteBtn.textContent === 'CONFIRM DELETE?') {
+                        deleteBtn.textContent = 'DELETE';
+                        deleteBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                    }
+                }, 3000);
+            } else {
+                deleteBtn.disabled = true;
+                deleteBtn.innerHTML = '<span class="loading-spinner"></span> DELETING...';
+                
+                showToast('⚡ DELETING PRODUCT...', 'success');
+                
+                const result = await window.dataSdk.delete(product);
+                
+                if (result.isOk) {
+                    showToast('✓ PRODUCT DELETED!');
+                } else {
+                    showToast('✗ DELETE FAILED', 'error');
+                    deleteBtn.disabled = false;
+                    deleteBtn.textContent = 'DELETE';
+                    deleteBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                }
+            }
+        }
+
+        async function confirmDeleteSupplier(backendId) {
+            const supplier = suppliers.find(s => s.__backendId === backendId);
+            if (!supplier) return;
+
+            const deleteBtn = document.getElementById(`deleteSupplierBtn_${backendId}`);
+            if (!deleteBtn) return;
+
+            if (deleteBtn.textContent === '🗑️ DELETE SUPPLIER') {
+                deleteBtn.textContent = '⚠️ CONFIRM DELETE?';
+                deleteBtn.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
+                
+                setTimeout(() => {
+                    if (deleteBtn.textContent === '⚠️ CONFIRM DELETE?') {
+                        deleteBtn.textContent = '🗑️ DELETE SUPPLIER';
+                        deleteBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                    }
+                }, 3000);
+            } else {
+                deleteBtn.disabled = true;
+                deleteBtn.innerHTML = '<span class="loading-spinner"></span> DELETING...';
+                
+                showToast('⚡ DELETING SUPPLIER...', 'success');
+                
+                const result = await window.dataSdk.delete(supplier);
+                
+                if (result.isOk) {
+                    showToast('✓ SUPPLIER DELETED!');
+                } else {
+                    showToast('✗ DELETE FAILED', 'error');
+                    deleteBtn.disabled = false;
+                    deleteBtn.textContent = '🗑️ DELETE SUPPLIER';
+                    deleteBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                }
+            }
+        }
+
+        async function confirmDeleteSale(backendId) {
+            const sale = sales.find(s => s.__backendId === backendId);
+            if (!sale) return;
+
+            const deleteBtn = document.getElementById(`deleteSaleBtn_${backendId}`);
+            if (!deleteBtn) return;
+
+            if (deleteBtn.textContent === '🗑️ DELETE SALE') {
+                deleteBtn.textContent = '⚠️ CONFIRM DELETE?';
+                deleteBtn.style.background = 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)';
+                
+                setTimeout(() => {
+                    if (deleteBtn.textContent === '⚠️ CONFIRM DELETE?') {
+                        deleteBtn.textContent = '🗑️ DELETE SALE';
+                        deleteBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                    }
+                }, 3000);
+            } else {
+                deleteBtn.disabled = true;
+                deleteBtn.innerHTML = '<span class="loading-spinner"></span> DELETING...';
+                
+                showToast('⚡ DELETING SALE...', 'success');
+                
+                const result = await window.dataSdk.delete(sale);
+                
+                if (result.isOk) {
+                    showToast('✓ SALE DELETED!');
+                } else {
+                    showToast('✗ DELETE FAILED', 'error');
+                    deleteBtn.disabled = false;
+                    deleteBtn.textContent = '🗑️ DELETE SALE';
+                    deleteBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                }
+            }
+        }
+
+        function renderApp() {
+            const config = window.elementSdk?.config || defaultConfig;
+            const customFont = config.font_family || defaultConfig.font_family;
+            const baseSize = config.font_size || defaultConfig.font_size;
+            const isMobile = window.innerWidth <= 768;
+
+            const app = document.getElementById('app');
+            app.style.background = config.background_color || defaultConfig.background_color;
+
+            let content = '';
+
+            content += `
+                <nav class="gradient-bg" style="padding: ${isMobile ? '12px 10px' : '24px 20px'}; box-shadow: 0 8px 32px rgba(108, 142, 184, 0.3); animation: slideInFromTop 0.6s ease; position: relative; z-index: 100; border-bottom: 3px solid ${config.primary_color || defaultConfig.primary_color};">
+                    <div style="display: flex; flex-direction: column; gap: ${isMobile ? '12px' : '20px'};">
+                        <div style="display: flex; align-items: center; ${isMobile ? 'flex-direction: column; gap: 8px;' : 'justify-content: center; gap: 16px;'}">
+                            <div style="width: ${isMobile ? '40px' : '48px'}; height: ${isMobile ? '40px' : '48px'}; background: linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.accent_color || defaultConfig.accent_color} 100%); border-radius: ${isMobile ? '10px' : '14px'}; display: flex; align-items: center; justify-content: center; font-size: ${isMobile ? '20px' : '28px'}; box-shadow: 0 8px 24px rgba(108, 142, 184, 0.4); animation: pulse 2s ease-in-out infinite;">⚡</div>
+                            <h1 class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.75}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin: 0; letter-spacing: ${isMobile ? '1px' : '3px'}; text-transform: uppercase; text-shadow: 0 2px 8px rgba(108, 142, 184, 0.3); text-align: ${isMobile ? 'center' : 'left'};">${config.app_title || defaultConfig.app_title}</h1>
+                        </div>
+                        <div style="display: grid; grid-template-columns: ${isMobile ? 'repeat(2, 1fr)' : 'repeat(2, 1fr)'}; gap: ${isMobile ? '6px' : '12px'};">
+                            <button onclick="currentView='dashboard'; renderApp();" class="nav-item btn-primary" style="background: ${currentView === 'dashboard' ? `linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.accent_color || defaultConfig.accent_color} 100%)` : `linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%)`}; color: ${currentView === 'dashboard' ? 'white' : config.primary_color || defaultConfig.primary_color}; padding: ${isMobile ? '10px 12px' : '14px 20px'}; border-radius: ${isMobile ? '8px' : '12px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; transition: all 0.3s; letter-spacing: 1px; text-transform: uppercase; box-shadow: ${currentView === 'dashboard' ? `0 4px 16px rgba(108, 142, 184, 0.4)` : `0 2px 8px rgba(108, 142, 184, 0.15)`};">📊 DASHBOARD</button>
+                            <button onclick="currentView='products'; renderApp();" class="nav-item btn-primary" style="background: ${currentView === 'products' ? `linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.accent_color || defaultConfig.accent_color} 100%)` : `linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%)`}; color: ${currentView === 'products' ? 'white' : config.primary_color || defaultConfig.primary_color}; padding: ${isMobile ? '10px 12px' : '14px 20px'}; border-radius: ${isMobile ? '8px' : '12px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; transition: all 0.3s; letter-spacing: 1px; text-transform: uppercase; box-shadow: ${currentView === 'products' ? `0 4px 16px rgba(108, 142, 184, 0.4)` : `0 2px 8px rgba(108, 142, 184, 0.15)`};">📦 PRODUCTS</button>
+                            <button onclick="currentView='suppliers'; renderApp();" class="nav-item btn-primary" style="background: ${currentView === 'suppliers' ? `linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.accent_color || defaultConfig.accent_color} 100%)` : `linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%)`}; color: ${currentView === 'suppliers' ? 'white' : config.primary_color || defaultConfig.primary_color}; padding: ${isMobile ? '10px 12px' : '14px 20px'}; border-radius: ${isMobile ? '8px' : '12px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; transition: all 0.3s; letter-spacing: 1px; text-transform: uppercase; box-shadow: ${currentView === 'suppliers' ? `0 4px 16px rgba(108, 142, 184, 0.4)` : `0 2px 8px rgba(108, 142, 184, 0.15)`};">🚚 SUPPLIERS</button>
+                            <button onclick="currentView='sales'; renderApp();" class="nav-item btn-primary" style="background: ${currentView === 'sales' ? `linear-gradient(135deg, ${config.primary_color || defaultConfig.primary_color} 0%, ${config.accent_color || defaultConfig.accent_color} 100%)` : `linear-gradient(135deg, ${config.secondary_color || defaultConfig.secondary_color} 0%, #0f172a 100%)`}; color: ${currentView === 'sales' ? 'white' : config.primary_color || defaultConfig.primary_color}; padding: ${isMobile ? '10px 12px' : '14px 20px'}; border-radius: ${isMobile ? '8px' : '12px'}; border: 2px solid ${config.primary_color || defaultConfig.primary_color}; font-weight: 700; cursor: pointer; font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 0.75 : baseSize * 0.875}px; transition: all 0.3s; letter-spacing: 1px; text-transform: uppercase; box-shadow: ${currentView === 'sales' ? `0 4px 16px rgba(108, 142, 184, 0.4)` : `0 2px 8px rgba(108, 142, 184, 0.15)`};">💰 SALES</button>
+                        </div>
+                    </div>
+                </nav>
+            `;
+
+            if (currentView === 'dashboard') {
+                content += renderDashboard();
+            } else if (currentView === 'products') {
+                content += renderProductManagement();
+            } else if (currentView === 'suppliers') {
+                content += renderSupplierManagement();
+            } else if (currentView === 'sales') {
+                content += renderSalesManagement();
+            }
+
+            if (currentModal) {
+                content += `
+                    <div class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 1000; padding: ${isMobile ? '10px' : '0'};" onclick="if(event.target === this) closeModal();">
+                        <div class="modal-content" style="background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%); border: 3px solid ${config.primary_color || defaultConfig.primary_color}; border-radius: ${isMobile ? '16px' : '20px'}; padding: ${isMobile ? '20px' : '40px'}; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8); max-width: ${isMobile ? '95%' : '90%'}; max-height: ${isMobile ? '90vh' : '90%'}; overflow-y: auto;" onclick="event.stopPropagation();">
+                            <h2 class="glow-text" style="font-family: ${customFont}, -apple-system, sans-serif; font-size: ${isMobile ? baseSize * 1.25 : baseSize * 1.75}px; font-weight: bold; color: ${config.primary_color || defaultConfig.primary_color}; margin: 0 0 ${isMobile ? '24px' : '32px'} 0; letter-spacing: ${isMobile ? '2px' : '3px'}; text-transform: uppercase;">${currentModal.title}</h2>
+                            ${currentModal.content}
+                        </div>
+                    </div>
+                `;
+            }
+
+            app.innerHTML = content;
+        }
+
+        const dataHandler = {
+            onDataChanged(data) {
+                products = data.filter(item => item.type === 'product');
+                suppliers = data.filter(item => item.type === 'supplier');
+                sales = data.filter(item => item.type === 'sale');
+                renderApp();
+            }
+        };
+
+        async function onConfigChange(config) {
+            renderApp();
+        }
+
+        // Mock Data SDK for local testing
+        function createMockDataSdk() {
+            let mockData = [];
+            let handler = null;
+            let nextBackendId = 1;
+
+            const loadFromStorage = () => {
+                try {
+                    const stored = localStorage.getItem('mockInventoryData');
+                    if (stored) {
+                        mockData = JSON.parse(stored);
+                        mockData.forEach(item => {
+                            const id = parseInt(item.__backendId.replace('mock_', ''));
+                            if (id >= nextBackendId) {
+                                nextBackendId = id + 1;
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error('Failed to load from localStorage:', e);
+                }
+            };
+
+            const saveToStorage = () => {
+                try {
+                    localStorage.setItem('mockInventoryData', JSON.stringify(mockData));
+                } catch (e) {
+                    console.error('Failed to save to localStorage:', e);
+                }
+            };
+
+            const notifyHandler = () => {
+                if (handler) {
+                    setTimeout(() => handler.onDataChanged([...mockData]), 100);
+                }
+            };
+
+            return {
+                async init(dataHandler) {
+                    handler = dataHandler;
+                    loadFromStorage();
+                    notifyHandler();
+                    return { isOk: true, isError: false, data: undefined, error: undefined };
+                },
+                async create(record) {
+                    try {
+                        const newRecord = {
+                            ...record,
+                            __backendId: `mock_${nextBackendId++}`
+                        };
+                        mockData.push(newRecord);
+                        saveToStorage();
+                        notifyHandler();
+                        return { isOk: true, isError: false, data: undefined, error: undefined };
+                    } catch (error) {
+                        return { isOk: false, isError: true, data: undefined, error };
+                    }
+                },
+                async update(record) {
+                    try {
+                        const index = mockData.findIndex(item => item.__backendId === record.__backendId);
+                        if (index !== -1) {
+                            mockData[index] = { ...record };
+                            saveToStorage();
+                            notifyHandler();
+                        }
+                        return { isOk: true, isError: false, data: undefined, error: undefined };
+                    } catch (error) {
+                        return { isOk: false, isError: true, data: undefined, error };
+                    }
+                },
+                async delete(record) {
+                    try {
+                        mockData = mockData.filter(item => item.__backendId !== record.__backendId);
+                        saveToStorage();
+                        notifyHandler();
+                        return { isOk: true, isError: false, data: undefined, error: undefined };
+                    } catch (error) {
+                        return { isOk: false, isError: true, data: undefined, error };
+                    }
+                }
+            };
+        }
+
+        async function init() {
+            console.log('Initializing system...');
+            
+            // Use mock SDK if real SDK not available (for local testing)
+            if (!window.dataSdk) {
+                console.log('Real Data SDK not found, using mock SDK for local testing...');
+                window.dataSdk = createMockDataSdk();
+                showToast('🔧 RUNNING IN LOCAL TEST MODE', 'success');
+            }
+            
+            if (window.dataSdk) {
+                console.log('Data SDK found, initializing...');
+                const result = await window.dataSdk.init(dataHandler);
+                if (!result.isOk) {
+                    console.error('Failed to initialize data SDK:', result.error);
+                    showToast('⚠️ DATA SYSTEM INITIALIZATION FAILED', 'error');
+                } else {
+                    console.log('Data SDK initialized successfully');
+                }
+            } else {
+                console.error('Data SDK not found!');
+                showToast('⚠️ DATA SDK NOT AVAILABLE', 'error');
+            }
+
+            if (window.elementSdk) {
+                console.log('Element SDK found, initializing...');
+                await window.elementSdk.init({
+                    defaultConfig,
+                    onConfigChange,
+                    mapToCapabilities: (config) => ({
+                        recolorables: [
+                            {
+                                get: () => config.background_color || defaultConfig.background_color,
+                                set: (value) => {
+                                    config.background_color = value;
+                                    window.elementSdk.setConfig({ background_color: value });
+                                }
+                            },
+                            {
+                                get: () => config.secondary_color || defaultConfig.secondary_color,
+                                set: (value) => {
+                                    config.secondary_color = value;
+                                    window.elementSdk.setConfig({ secondary_color: value });
+                                }
+                            },
+                            {
+                                get: () => config.text_color || defaultConfig.text_color,
+                                set: (value) => {
+                                    config.text_color = value;
+                                    window.elementSdk.setConfig({ text_color: value });
+                                }
+                            },
+                            {
+                                get: () => config.primary_color || defaultConfig.primary_color,
+                                set: (value) => {
+                                    config.primary_color = value;
+                                    window.elementSdk.setConfig({ primary_color: value });
+                                }
+                            },
+                            {
+                                get: () => config.accent_color || defaultConfig.accent_color,
+                                set: (value) => {
+                                    config.accent_color = value;
+                                    window.elementSdk.setConfig({ accent_color: value });
+                                }
+                            }
+                        ],
+                        borderables: [],
+                        fontEditable: {
+                            get: () => config.font_family || defaultConfig.font_family,
+                            set: (value) => {
+                                config.font_family = value;
+                                window.elementSdk.setConfig({ font_family: value });
+                            }
+                        },
+                        fontSizeable: {
+                            get: () => config.font_size || defaultConfig.font_size,
+                            set: (value) => {
+                                config.font_size = value;
+                                window.elementSdk.setConfig({ font_size: value });
+                            }
+                        }
+                    }),
+                    mapToEditPanelValues: (config) => new Map([
+                        ["app_title", config.app_title || defaultConfig.app_title],
+                        ["welcome_message", config.welcome_message || defaultConfig.welcome_message]
+                    ])
+                });
+                console.log('Element SDK initialized successfully');
+            }
+
+            renderApp();
+            console.log('System initialization complete');
+        }
+
+        init();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a7b7700d39cd82a',t:'MTc2NDY4NTIyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
